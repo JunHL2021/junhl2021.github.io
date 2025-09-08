@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  
+  
+  
+  <entry>
+    <title>WordPress开启Redis</title>
+    <link href="/2025/09/08/Enable-Redis/"/>
+    <url>/2025/09/08/Enable-Redis/</url>
+    
+    <content type="html"><![CDATA[<!-- wp:image {"sizeSlug":"large","align":"center"} --><figure class="wp-block-image aligncenter size-large"><img src="https://nephogram.innovpeaks.com/i/2025/07/08/686c3d3b9c009.png" alt=""/></figure><!-- /wp:image --><p>在1Panel服务器面板下安装的应用均为Docker版，其中WordPress的插件Redis Object Cache安装后无法直接使用，需要进行一些配置。</p><p>首先，打开wordpress后台，在插件市场里搜索安装“Redis Object Cache”并启用。之后可以看到已经检测到服务器支Redis写入，但Redis不可访问。这时候回到1Panel面板，打开网站的根目录-&gt;wp-config.php这个文件。（如果你的WordPress是在应用商店直接安装，那么你的网站根目录就是/opt/1panel/apps/wordpress/“你设置的应用名”/data下）</p><p>在此文件末尾添加如下代码：（Redis密码可在数据库-&gt;Redis-&gt;连接信息中找到）</p><p><span style="font-size: 12pt;">define('WP_REDIS_HOST', 'redis');</span></p><p><span style="font-size: 12pt;">define('WP_REDIS_PORT', '6379');</span></p><p><span style="font-size: 12pt;">define('WP_REDIS_DATABASE', '0');</span></p><p><span style="font-size: 12pt;">define('WP_REDIS_PASSWORD', '此处替换成你的redis密码');</span></p><p>改完保存，回到WordPress后台刷新插件页面可以发现Redis已经可以访问了。 教程到这里已经完成一半，这时候开启对象缓存，会收到一个关于数据库的报错，这个报错是因为object-cache.php配置的问题。该文件在根目录/wp-content/object-cache.php（默认位置/opt/1panel/apps/wordpress/“你设置的应用名”/data/wp-content/object-cache.php；此文件只有在开启对象缓存后才会出现）。</p><p>打开它，搜索“protected function build_parameters”大概在620行可以找到下面这段代码：</p><!-- wp:image {"sizeSlug":"large","align":"center"} --><figure class="wp-block-image aligncenter size-large"><img src="https://nephogram.innovpeaks.com/i/2025/07/08/686c45c305987.png" alt=""/></figure><!-- /wp:image --><p>host里原本内容为127.0.0.1（由于Redis是Dockers容器所以127.0.0.1指向的并非Redis），需要将其改成Redis连接信息里的容器连接地址（在数据库-&gt;Redis-&gt;连接信息）。 然后加一个密码的字段，字段填写Redis连接信息里的容器密码。</p><p><span style="font-size: 12pt;">'password' =&gt; '填写你的redis密码',</span></p><p>完成后保存，刷新网站可以发现网站报错消失，Redis正常使用。</p><p>注意：若插件Redis Object Cache设置界面右下角有此提示，是正常情况，因为WordPress是Docker版没有继承的PhpRedis扩展，但是Redis插件是能正常使用的。</p><!-- wp:image {"sizeSlug":"large"} --><figure class="wp-block-image size-large"><img src="https://nephogram.innovpeaks.com/i/2025/07/08/686c495910dc2.png" alt=""/></figure><!-- /wp:image --><p>&nbsp;</p>]]></content>
+    
+    
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>Hello World</title>
+    <link href="/2025/09/08/Hello-World/"/>
+    <url>/2025/09/08/Hello-World/</url>
+    
+    <content type="html"><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p><h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ hexo new <span class="hljs-string">&quot;My New Post&quot;</span><br></code></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/writing.html">Writing</a></p><h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ hexo server<br></code></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/server.html">Server</a></p><h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ hexo generate<br></code></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/generating.html">Generating</a></p><h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ hexo deploy<br></code></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>]]></content>
+    
+    
+    
+  </entry>
+  
+  
+  
+  
+</search>
